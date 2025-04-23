@@ -32,7 +32,7 @@ No accounts. No analytics. No turning back.
 
 ## 🚀 How to Use
 
-1. Visit the [Live PWA](https://your-username.github.io/noorgate-pwa/)
+1. Visit the [Live PWA](https://kutumia.github.io/noorgate/)
 2. Follow the 4 steps to:
    - Access your router
    - Set DNS (e.g., Kahf Guard: `193.148.18.2`)
@@ -64,7 +64,7 @@ No accounts. No analytics. No turning back.
 ## 📬 Share the Light
 
 Share the PWA:
-- WhatsApp: `https://wa.me/?text=Check%20out%20NoorGate:%20https://your-username.github.io/noorgate-pwa`
+- WhatsApp: `**`
 - Use in schools, masjids, parenting groups
 
 ---
