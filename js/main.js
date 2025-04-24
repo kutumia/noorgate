@@ -66,3 +66,10 @@ document.addEventListener('DOMContentLoaded', function () {
     goToTab('success-tab');
   });
 });
+document.getElementById('confirmGenerate').addEventListener('click', () => {
+  const chars = '!@#$%^ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  const arr = new Uint32Array(16);
+  window.crypto.getRandomValues(arr);
+  const password = Array.from(arr, n => chars[n % chars.length]).join('');
+  document.getElementById('routerPassword').value = password;
+});
