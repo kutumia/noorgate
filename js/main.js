@@ -33,9 +33,9 @@ function lockRouter() {
   goToTab('success-tab');
 }
 
-function testDNS() {
-  alert('This would test DNS in production.\nFor now, visit dnsleaktest.com manually.');
-}
+// function testDNS() {
+//   alert('This would test DNS in production.\nFor now, visit dnsleaktest.com manually.');
+// }
 
 // Initialize
 document.getElementById('routerIP').addEventListener('input', function(e) {
@@ -51,4 +51,17 @@ document.getElementById('dnsProvider').addEventListener('change', function(e) {
   const selected = dns[e.target.value];
   document.getElementById('dnsPrimary').value = selected.primary;
   document.getElementById('dnsSecondary').value = selected.secondary;
+});
+document.getElementById('dnsTestBtn').addEventListener('click', async () => {
+  const resultBox = document.getElementById('dnsTestResult');
+  resultBox.textContent = 'Testing...';
+
+  try {
+    await fetch('http://exampleadultsite.com', { mode: 'no-cors' });
+    resultBox.textContent = '⚠️ DNS filtering might not be active!';
+    resultBox.style.color = 'red';
+  } catch (e) {
+    resultBox.textContent = '✅ DNS filtering is active!';
+    resultBox.style.color = 'green';
+  }
 });
