@@ -1,67 +1,44 @@
-[
-    {
-      "brand": "TP-Link",
-      "model": "Archer C7",
-      "dns_support": true,
-      "ip": "192.168.0.1"
-    },
-    {
-      "brand": "BT",
-      "model": "Home Hub 5",
-      "dns_support": false,
-      "ip": "",
-      "workaround": "Use device-level DNS. BT often blocks DNS changes in router UI."
-    },
-    {
-      "brand": "Sky",
-      "model": "Q Hub",
-      "dns_support": false,
-      "ip": "",
-      "workaround": "Sky routers require custom firmware or device-level DNS changes."
-    },
-    {
-      "brand": "Netgear",
-      "model": "Nighthawk AX12",
-      "dns_support": true,
-      "ip": "192.168.1.1"
-    },
-    {
-      "brand": "ASUS",
-      "model": "RT-AX88U",
-      "dns_support": true,
-      "ip": "192.168.50.1"
-    },
-    {
-      "brand": "Virgin Media",
-      "model": "Hub 3",
-      "dns_support": false,
-      "ip": "",
-      "workaround": "Set DNS per device. VM firmware blocks router DNS updates."
-    },
-    {
-      "brand": "Linksys",
-      "model": "WRT1900ACS",
-      "dns_support": true,
-      "ip": "192.168.1.1"
-    },
-    {
-      "brand": "Huawei",
-      "model": "HG8145V5",
-      "dns_support": true,
-      "ip": "192.168.100.1"
-    },
-    {
-      "brand": "Vodafone",
-      "model": "Gigabox",
-      "dns_support": false,
-      "ip": "",
-      "workaround": "Use Vodafone app or set DNS on individual devices."
-    },
-    {
-      "brand": "Zyxel",
-      "model": "Armor Z2",
-      "dns_support": true,
-      "ip": "192.168.1.1"
-    }
-  ]
-  
+// Load router models from routers.json
+fetch('data/routers.json')
+  .then(res => res.json())
+  .then(routers => {
+    const dropdown = document.getElementById('routerDropdown');
+    routers.forEach(router => {
+      const option = document.createElement('option');
+      option.value = router.model;
+      option.textContent = `${router.brand} ${router.model}`;
+      option.dataset.dns = router.dns_support;
+      option.dataset.ip = router.ip || '';
+      dropdown.appendChild(option);
+    });
+  });
+
+document.getElementById('routerDropdown').addEventListener('change', (e) => {
+  const selected = e.target.options[e.target.selectedIndex];
+  const dnsSupported = selected.dataset.dns === "true";
+  const ip = selected.dataset.ip;
+
+  // Prefill router IP if known
+  if (ip) document.getElementById('routerIP').value = ip;
+
+  // Warn if DNS can't be changed
+  const warning = document.getElementById('routerWarning');
+  if (!dnsSupported) {
+    warning.textContent = '⚠️ This router may not support DNS changes. Consider setting DNS on devices instead.';
+  } else {
+    warning.textContent = '';
+  }
+
+  // Enable Next if valid IP
+  document.getElementById('routerNextBtn').disabled = !ip.match(/^\d{1,3}(\.\d{1,3}){3}$/);
+});
+
+// Auto-detect router IP (basic fallback only)
+function detectRouter() {
+  const commonIPs = ["192.168.1.1", "192.168.0.1", "10.0.0.1"];
+  document.getElementById('routerIP').value = commonIPs[0]; // Simulate detection
+  document.getElementById('routerNextBtn').disabled = false;
+}
+
+// Public
+window.detectRouter = detectRouter;

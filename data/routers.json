@@ -1,0 +1,13 @@
+[
+    { "brand": "TP-Link", "model": "Archer C7", "dns_support": true, "ip": "192.168.0.1" },
+    { "brand": "BT", "model": "Home Hub 5", "dns_support": false, "ip": "192.168.1.254" },
+    { "brand": "Sky", "model": "Q Hub", "dns_support": false, "ip": "192.168.0.1" },
+    { "brand": "Virgin", "model": "Super Hub 3", "dns_support": false, "ip": "192.168.0.1" },
+    { "brand": "ASUS", "model": "RT-AC68U", "dns_support": true, "ip": "192.168.1.1" },
+    { "brand": "Netgear", "model": "Nighthawk AX4", "dns_support": true, "ip": "192.168.1.1" },
+    { "brand": "Linksys", "model": "EA7500", "dns_support": true, "ip": "192.168.1.1" },
+    { "brand": "Huawei", "model": "HG8245H", "dns_support": true, "ip": "192.168.100.1" },
+    { "brand": "Zyxel", "model": "VMG3925-B10B", "dns_support": true, "ip": "192.168.1.1" },
+    { "brand": "D-Link", "model": "DIR-878", "dns_support": true, "ip": "192.168.0.1" }
+  ]
+  

@@ -1,44 +1,78 @@
-/* main.css – NoorGate Custom Styling */
-
 body {
-  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background: #f9fcff;
+  color: #333;
 }
 
 h1 {
+  font-weight: 700;
+  color: #183153;
+}
+
+h4 {
   font-weight: 600;
-  color: #0d1a26;
+  margin-top: 10px;
 }
 
-.tab-content {
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+label {
+  font-weight: 500;
 }
 
-.btn-outline-primary,
-.btn-outline-secondary {
-  border-radius: 20px;
+input.form-control:read-only {
+  background-color: #f5f5f5;
 }
 
-.modal-title {
+.alert-info {
+  background-color: #e6f2ff;
+  border-color: #cfe2ff;
+  color: #003b73;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+  color: #856404;
+}
+
+.progress-bar {
+  transition: width 0.4s ease;
+  background: linear-gradient(to right, #00c3ff, #0077ff);
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #ffffff;
+  border-bottom: 2px solid #0077ff;
   font-weight: bold;
-  font-size: 1.2rem;
 }
 
-.modal-body p {
-  font-size: 0.95rem;
-  color: #444;
+.nav-tabs .nav-link {
+  color: #0077ff;
+}
+
+.btn-outline-primary {
+  border-color: #0077ff;
+  color: #0077ff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0077ff;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #e60023;
+  border-color: #e60023;
 }
 
 #dnsTestResult {
-  transition: all 0.3s ease-in-out;
+  font-size: 1rem;
 }
 
-input.form-control[readonly] {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
+.modal-header.bg-warning {
+  background: #fff4cd;
+  border-bottom: 1px solid #ffeeba;
 }
 
-#setupProgress {
-  transition: width 0.3s ease-in-out;
+.list-group-item {
+  font-size: 0.9rem;
 }
