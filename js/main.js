@@ -1,40 +1,67 @@
-// router.js — Load router selector from routers.json
-document.addEventListener('DOMContentLoaded', function () {
-  const dropdownContainer = document.getElementById('routerDropdown');
-  if (!dropdownContainer) return;
+function goToTab(panelId) {
+  const trigger = document.querySelector(`button[data-bs-target="#${panelId}"]`);
+  if (trigger) {
+    const tab = new bootstrap.Tab(trigger);
+    tab.show();
 
-  fetch('data/routers.json')
-    .then(response => response.json())
-    .then(routers => {
-      const select = document.createElement('select');
-      select.className = 'form-select mt-2';
-      select.innerHTML = `<option value="">Select your router</option>` +
-        routers.map((r, i) => `<option value="${i}">${r.brand} ${r.model}</option>`).join('');
+    const progressMap = {
+      router: 25,
+      dns: 50,
+      lock: 75,
+      success: 100
+    };
+    document.getElementById('setupProgress').style.width = `${progressMap[panelId]}%`;
+  }
+}
 
-      const infoBox = document.createElement('div');
-      infoBox.id = 'routerWarning';
-      infoBox.className = 'alert alert-warning mt-2 d-none';
+function generatePassword() {
+  const chars = '!@#$%^ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  const arr = new Uint32Array(16);
+  window.crypto.getRandomValues(arr);
+  const password = Array.from(arr, n => chars[n % chars.length]).join('');
+  document.getElementById('routerPassword').value = password;
+}
 
-      select.addEventListener('change', (e) => {
-        const selected = routers[e.target.value];
-        if (!selected) return;
-        
-        document.getElementById('routerIP').value = selected.ip || '';
-        document.getElementById('routerNextBtn').disabled = !!selected.ip;
+function lockRouter() {
+  const password = document.getElementById('routerPassword').value;
+  if (!password) {
+    alert('Please generate a password first!');
+    return;
+  }
+  localStorage.setItem('lastPassHash', password.substring(0, 8));
+  goToTab('success');
+}
 
-        if (selected.dns_support === false) {
-          infoBox.textContent = selected.workaround || 'This router may not support DNS changes. Set DNS per device.';
-          infoBox.classList.remove('d-none');
-        } else {
-          infoBox.classList.add('d-none');
-        }
-      });
-
-      dropdownContainer.appendChild(select);
-      dropdownContainer.appendChild(infoBox);
+function testDNS() {
+  const resultBox = document.getElementById('dnsTestResult');
+  resultBox.textContent = 'Testing...';
+  fetch('https://example.com', { mode: 'no-cors' })
+    .then(() => {
+      resultBox.textContent = '⚠️ DNS filtering might not be active!';
+      resultBox.style.color = 'red';
     })
-    .catch(err => {
-      dropdownContainer.innerHTML = '<div class="alert alert-danger">⚠️ Failed to load router list.</div>';
-      console.error('Router DB fetch failed:', err);
+    .catch(() => {
+      resultBox.textContent = '✅ DNS filtering is active!';
+      resultBox.style.color = 'green';
     });
+}
+
+// Initialization
+document.getElementById('dnsTestBtn').addEventListener('click', testDNS);
+
+document.getElementById('dnsProvider').addEventListener('change', function (e) {
+  const dns = {
+    kahf: { primary: '193.148.18.2', secondary: '193.148.18.3' },
+    cleanbrowsing: { primary: '185.228.168.168', secondary: '185.228.169.168' }
+  };
+  const selected = dns[e.target.value];
+  document.getElementById('dnsPrimary').value = selected.primary;
+  document.getElementById('dnsSecondary').value = selected.secondary;
 });
+
+document.getElementById('routerIP').addEventListener('input', function (e) {
+  document.getElementById('routerNextBtn').disabled =
+    !e.target.value.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
+});
+
+document.getElementById('confirmGenerate').addEventListener('click', generatePassword);
