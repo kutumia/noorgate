@@ -33,9 +33,21 @@ function lockRouter() {
   goToTab('success-tab');
 }
 
-// function testDNS() {
-//   alert('This would test DNS in production.\nFor now, visit dnsleaktest.com manually.');
-// }
+function testDNS() {
+  const resultBox = document.getElementById('dnsTestResult');
+  resultBox.textContent = 'Testing...';
+
+  fetch('https://example.com', { mode: 'no-cors' })
+    .then(() => {
+      resultBox.textContent = '⚠️ DNS filtering might not be active!';
+      resultBox.style.color = 'red';
+    })
+    .catch(() => {
+      resultBox.textContent = '✅ DNS filtering is active!';
+      resultBox.style.color = 'green';
+    });
+}
+
 
 // Initialize
 document.getElementById('routerIP').addEventListener('input', function(e) {
