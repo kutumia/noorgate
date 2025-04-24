@@ -1,75 +1,40 @@
+// router.js — Load router selector from routers.json
 document.addEventListener('DOMContentLoaded', function () {
-  // Setup Progress Logic
-  function goToTab(tabId) {
-    const tab = new bootstrap.Tab(document.getElementById(tabId));
-    tab.show();
-    
-    const progressMap = {
-      'router-tab': 25,
-      'dns-tab': 50,
-      'lock-tab': 75,
-      'success-tab': 100
-    };
-    document.getElementById('setupProgress').style.width = `${progressMap[tabId]}%`;
-  }
+  const dropdownContainer = document.getElementById('routerDropdown');
+  if (!dropdownContainer) return;
 
-  // DNS Test
-  document.getElementById('dnsTestBtn').addEventListener('click', async () => {
-    const resultBox = document.getElementById('dnsTestResult');
-    resultBox.textContent = 'Testing...';
+  fetch('data/routers.json')
+    .then(response => response.json())
+    .then(routers => {
+      const select = document.createElement('select');
+      select.className = 'form-select mt-2';
+      select.innerHTML = `<option value="">Select your router</option>` +
+        routers.map((r, i) => `<option value="${i}">${r.brand} ${r.model}</option>`).join('');
 
-    try {
-      await fetch('https://example.com', { mode: 'no-cors' });  // or use a dummy
-      resultBox.textContent = '⚠️ DNS filtering might not be active!';
-      resultBox.style.color = 'red';
-    } catch (e) {
-      resultBox.textContent = '✅ DNS filtering is active!';
-      resultBox.style.color = 'green';
-    }
-  });
+      const infoBox = document.createElement('div');
+      infoBox.id = 'routerWarning';
+      infoBox.className = 'alert alert-warning mt-2 d-none';
 
-  // Router IP Enablement
-  document.getElementById('routerIP').addEventListener('input', function (e) {
-    document.getElementById('routerNextBtn').disabled =
-      !e.target.value.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
-  });
+      select.addEventListener('change', (e) => {
+        const selected = routers[e.target.value];
+        if (!selected) return;
+        
+        document.getElementById('routerIP').value = selected.ip || '';
+        document.getElementById('routerNextBtn').disabled = !!selected.ip;
 
-  // DNS Switching Logic
-  document.getElementById('dnsProvider').addEventListener('change', function (e) {
-    const dns = {
-      kahf: { primary: '193.148.18.2', secondary: '193.148.18.3' },
-      cleanbrowsing: { primary: '185.228.168.168', secondary: '185.228.169.168' }
-    };
-    const selected = dns[e.target.value];
-    document.getElementById('dnsPrimary').value = selected.primary;
-    document.getElementById('dnsSecondary').value = selected.secondary;
-  });
+        if (selected.dns_support === false) {
+          infoBox.textContent = selected.workaround || 'This router may not support DNS changes. Set DNS per device.';
+          infoBox.classList.remove('d-none');
+        } else {
+          infoBox.classList.add('d-none');
+        }
+      });
 
-  // Password Gen
-  document.getElementById('routerPassword').value = '';
-  document.querySelector('button[onclick="generatePassword()"]').addEventListener('click', () => {
-    const chars = '!@#$%^ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-    const arr = new Uint32Array(16);
-    window.crypto.getRandomValues(arr);
-    const password = Array.from(arr, n => chars[n % chars.length]).join('');
-    document.getElementById('routerPassword').value = password;
-  });
-
-  // Lock
-  document.querySelector('button[onclick="lockRouter()"]').addEventListener('click', () => {
-    const password = document.getElementById('routerPassword').value;
-    if (!password) {
-      alert('Please generate a password first!');
-      return;
-    }
-    localStorage.setItem('lastPassHash', password.substring(0, 8));
-    goToTab('success-tab');
-  });
-});
-document.getElementById('confirmGenerate').addEventListener('click', () => {
-  const chars = '!@#$%^ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-  const arr = new Uint32Array(16);
-  window.crypto.getRandomValues(arr);
-  const password = Array.from(arr, n => chars[n % chars.length]).join('');
-  document.getElementById('routerPassword').value = password;
+      dropdownContainer.appendChild(select);
+      dropdownContainer.appendChild(infoBox);
+    })
+    .catch(err => {
+      dropdownContainer.innerHTML = '<div class="alert alert-danger">⚠️ Failed to load router list.</div>';
+      console.error('Router DB fetch failed:', err);
+    });
 });
